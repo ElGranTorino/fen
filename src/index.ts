@@ -1,6 +1,4 @@
-type IPiece = 'r' | 'n' | 'b' | 'q' | 'k' | 'p' | 'R' | 'N' | 'B' | 'Q' | 'K' | 'P';
-
-type IMoveTurn = 'b' | 'w';
+type IPiece = 'r' | 'n' | 'b' | 'q' | 'k' | 'p' | 'R' | 'N' | 'B' | 'Q' | 'K' | 'P' | string;
 
 interface ICastlingRights{
   long: boolean;
@@ -8,12 +6,12 @@ interface ICastlingRights{
 }
 
 interface IGameState {
-  board: string[][];
+  board: Array<Array<string>>;
   castling: {
     white: ICastlingRights;
     black: ICastlingRights;
   };
-  turn: 'b' | 'w';
+  turn: string;
   enPassant: null | string;
   movesWithoutCapture: number;
   upcomingMove: number;
@@ -25,12 +23,19 @@ class Fen {
       throw new Error("FEN string expression is required");
     }
 
-    const [board, turn, castling, enPassant, movesWithoutCapture, upcomingMove]: string[] =
-      expression.split(" ");
+    const [
+      board, 
+      turn, 
+      castling, 
+      enPassant, 
+      movesWithoutCapture, 
+      upcomingMove
+    ] = expression.split(" ");
+
     const game: IGameState = {
       board: board
         .split("/")
-        .map((row) => row.split("").map((cell) => (/\d/.test(cell) ? "" : cell))),
+        .map((row: string) => row.split("").map((cell): IPiece => (/\d/.test(cell) ? "" : cell))),
       castling: {
         white: {
           long: castling.includes("Q"),
@@ -50,3 +55,5 @@ class Fen {
     return game;
   }
 }
+
+export default Fen
